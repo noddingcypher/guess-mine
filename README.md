@@ -163,3 +163,29 @@ io.on("connection", socket => {
 
 emit : 방금 연결된 클라이언트에게 이벤트 생성
 broadcast.emit : 방금 연결된 한 클라이언트를 제외한 나머지 클라이언트에게 이벤트 생성 
+
+클라이언트 (index.js)에서 event를 보내면?
+
+-index.js
+setTimeout(() => socket.emit("helloGuys"), 4000);
+-server.js
+io.on("connection", socket => {
+  socket.on("helloGuys", () => console.log("the client said hello"));
+});
+
+이렇게 하면 프론트엔드에서 메세지를 보내면 백엔드의 콘솔에서 "the client ~"라는 응답이 발생됨. 
+
+지금까지 한 방식으로 백엔드-프론트엔드간에 커뮤니케이션을 만들 수 있다. 
+
+만들어진 socket 연결은 계속 살아있다. 
+사용자가 offline이 되거나(페이지 이동) 서버가 연결을 끊을 때만 연결이 끊어짐. 
+
+연결이 이뤄지면 socket을 받아 올 수 있음. 
+- 하나의 socket만 생김. 여기서 모든 것이 빌드됨.
+- 이 socket을 통해서 다른 socket 연결을 건드릴 수 있음. 
+
+채팅 앱의 과정
+- 클라이언트가 새로 연결되면 서버가 다른 클라이언트들에게 broadcasting
+- 그 새로운 클라이언트가 메시지를 보내면 서버가 다른 클라이언트들에게 broadcasting
+- 각각의 socket client 마다 이 과정이 반복
+- 이 때 각각의 socket들은 new message라는 event를 듣고 있어야 함. 
