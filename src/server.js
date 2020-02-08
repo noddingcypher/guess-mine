@@ -21,5 +21,5 @@ const server = app.listen(PORT, handleListening);
 const io = socketIO.listen(server);
 
 io.on("connection", socket => {
-  setTimeout(() => socket.emit("hello"), 5000);
+  setTimeout(() => socket.broadcast.emit("hello"), 5000);
 });

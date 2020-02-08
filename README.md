@@ -126,3 +126,40 @@ script(src="/socket.io/socket.io.js") -> 프론트엔드에도 연결되어야 �
 
 socket은 req라고 생각할 수 있음. 어떤 요청이나 응답을 받고 console에 req처럼 출력할 수 있음. 
 socket에는 id가 있음. 
+
+socketIO를 이용한 chat application
+- 두가지 이벤트를 listening
+  - 유저가 메세지를 보내는 event
+  - 다른 유저가 join 하는 event
+
+누군가 socketIO에 연결되면 연결된 (socket)을 socketIO로 가져와서 "hello"라는 메세지를 보낸다
+socket.emit("hello") / 서버가 client에게 "hello"라고 얘기한다. 
+
+index.js에서는 
+socket.on("hello", () => console.log("Somebody said hello"));
+-> 클라이언트가 hello라는 event( client와 서버에 연결)에 "somebody said hello라고 반응하도록 한다. 
+
+server.js가 서버, index.js가 클라이언트에서 일어나는 일들
+
+서버는 이벤트를 발생시킴. 클라이언트는 그 이번트를 듣고 있다. 
+
+서버로부터 발생된 socket.emit은 방금 연결된 client에게 직접 보내짐. 
+
+클라이언트가 여러개라면? 
+연결된 하나의 클라이언트 이외에 다른 클라이언트들에게도 메세지를 보내고 싶다면? 
+
+이때는 socket.broadcast.emit이다. 
+broadcast.emit으로 하고 방금의 index.js를 실행하면 somebody ~ 메세지를 출력하지 않는다.
+왜냐하면 broadcast는 방금 연결된 클라이언트를 제외하고 나머지 클라이언트들에게 event를 보낸다. 
+
+incognito 페이지에서 localhost에 접속하면 someboday ~ 메세지가 출력된다. 이 클라이언트에게는
+hello event가 전송되었기 때문이다. 
+
+io.on("connection", socket => {
+  setTimeout(() => socket.broadcast.emit("hello"), 5000);
+});
+
+여기서 parameter인 socket은 방금 막 만들어진 socketIO를 의미한다. 
+
+emit : 방금 연결된 클라이언트에게 이벤트 생성
+broadcast.emit : 방금 연결된 한 클라이언트를 제외한 나머지 클라이언트에게 이벤트 생성 
