@@ -17,6 +17,7 @@ app.get("/", (req, res) =>
 );
 
 const handleListening = () => {
+  console.log("PORT");
   console.log(`Server running : http://localhost:${PORT}`);
 };
 
